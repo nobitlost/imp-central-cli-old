@@ -24,16 +24,15 @@
 
 'use strict';
 
-const Build = require('../../../lib/Build');
+const Log = require('../../../lib/Log');
 const Options = require('../../../lib/util/Options');
 
-const COMMAND = 'run';
-const COMMAND_SECTION = 'build';
-const COMMAND_DESCRIPTION = 'Creates, deploys and runs a build. Optionally, displays logs of the running build';
-const COMMAND_OPTIONS = '[--dg <DEVICE_GROUP_IDENTIFIER>] [--device-file <device_file>] [--agent-file <agent_file>] ' + 
-                        '[--descr <build_description>] [--origin <origin>] [--tag <tag>] [--flagged ([true]|false)] [--log] [--help]';
+const COMMAND = 'get';
+const COMMAND_SECTION = 'log';
+const COMMAND_DESCRIPTION = 'Displays historical logs for the specified Device';
+const COMMAND_OPTIONS = '[--device <DEVICE_IDENTIFIER>] [--help]';
 
-                        exports.command = COMMAND;
+exports.command = COMMAND;
 
 exports.describe = COMMAND_DESCRIPTION;
 
@@ -41,14 +40,7 @@ exports.builder = function (yargs) {
     return yargs
         .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, COMMAND_OPTIONS))
         .options(Options.getOptions({
-            [Options.DEVICE_GROUP_IDENTIFIER] : false,
-            [Options.DEVICE_FILE] : false,
-            [Options.AGENT_FILE] : false,
-            [Options.DESCRIPTION] : { demandOption : false, describe : 'Description of the Deployment' },
-            [Options.ORIGIN] : false,
-            [Options.TAG] : false,
-            [Options.FLAGGED] : false,
-            [Options.LOG] : false
+            [Options.DEVICE_IDENTIFIER] : false
         }))
         .strict();
 };
@@ -57,6 +49,5 @@ exports.handler = function (argv) {
     if (!Options.checkCommandArgs(argv)) {
         return;
     }
-    const options = new Options(argv);
-    new Build(options).run(options);
+    new Log().get(new Options(argv));
 };

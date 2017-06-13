@@ -27,13 +27,13 @@
 const Build = require('../../../lib/Build');
 const Options = require('../../../lib/util/Options');
 
-const COMMAND = 'run';
+const COMMAND = 'list';
 const COMMAND_SECTION = 'build';
-const COMMAND_DESCRIPTION = 'Creates, deploys and runs a build. Optionally, displays logs of the running build';
-const COMMAND_OPTIONS = '[--dg <DEVICE_GROUP_IDENTIFIER>] [--device-file <device_file>] [--agent-file <agent_file>] ' + 
-                        '[--descr <build_description>] [--origin <origin>] [--tag <tag>] [--flagged ([true]|false)] [--log] [--help]';
+const COMMAND_DESCRIPTION = 'Displays info about all or filtered Builds (Deployments) available for a user';
+const COMMAND_OPTIONS = '[--product-id <product_id>] [--product-name <product_name>] [--dg-id <device_group_id>] [--dg-name <device_group_name>] ' +
+                        '[--sha <deployment_sha>] [--flagged ([true]|false)] [--tag <tag>] [--help]';
 
-                        exports.command = COMMAND;
+exports.command = COMMAND;
 
 exports.describe = COMMAND_DESCRIPTION;
 
@@ -41,14 +41,13 @@ exports.builder = function (yargs) {
     return yargs
         .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, COMMAND_OPTIONS))
         .options(Options.getOptions({
-            [Options.DEVICE_GROUP_IDENTIFIER] : false,
-            [Options.DEVICE_FILE] : false,
-            [Options.AGENT_FILE] : false,
-            [Options.DESCRIPTION] : { demandOption : false, describe : 'Description of the Deployment' },
-            [Options.ORIGIN] : false,
-            [Options.TAG] : false,
-            [Options.FLAGGED] : false,
-            [Options.LOG] : false
+            [Options.PRODUCT_ID] : { demandOption : false, describeFormatArgs : ['Builds'] },
+            [Options.PRODUCT_NAME] : { demandOption : false, describeFormatArgs : ['Builds'] },
+            [Options.DEVICE_GROUP_ID] : { demandOption : false, describeFormatArgs : ['Builds'] },
+            [Options.DEVICE_GROUP_NAME] : { demandOption : false, describeFormatArgs : ['Builds'] },
+            [Options.SHA] : { demandOption : false, describe : 'List Builds with the specified Deployment SHA' },
+            [Options.TAG] : { demandOption : false, describe : 'List Builds with the specified Deployment tag' },
+            [Options.FLAGGED] : { demandOption : false, describe : 'List Builds with the specified flagged marker' }
         }))
         .strict();
 };
@@ -57,6 +56,5 @@ exports.handler = function (argv) {
     if (!Options.checkCommandArgs(argv)) {
         return;
     }
-    const options = new Options(argv);
-    new Build(options).run(options);
+    new Build().list(new Options(argv));
 };

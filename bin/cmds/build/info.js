@@ -27,11 +27,10 @@
 const Build = require('../../../lib/Build');
 const Options = require('../../../lib/util/Options');
 
-const COMMAND = 'history';
+const COMMAND = 'info';
 const COMMAND_SECTION = 'build';
-const COMMAND_DESCRIPTION = 'Displays info about all or filtered Builds (Deployments) available for a user';
-const COMMAND_OPTIONS = '[--product-id <product_id>] [--product-name <product_name>] [--dg-id <device_group_id>] [--dg-name <device_group_name>] ' +
-                        '[--sha <deployment_sha>] [--flagged ([true]|false)] [--tag <tag>] [--help]';
+const COMMAND_DESCRIPTION = 'Displays information about the specified build';
+const COMMAND_OPTIONS = '[--build <BUILD_IDENTIFIER>] [--help]';
 
 exports.command = COMMAND;
 
@@ -41,13 +40,7 @@ exports.builder = function (yargs) {
     return yargs
         .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, COMMAND_OPTIONS))
         .options(Options.getOptions({
-            [Options.PRODUCT_ID] : { demandOption : false, describeFormatArgs : ['Builds'] },
-            [Options.PRODUCT_NAME] : { demandOption : false, describeFormatArgs : ['Builds'] },
-            [Options.DEVICE_GROUP_ID] : { demandOption : false, describeFormatArgs : ['Builds'] },
-            [Options.DEVICE_GROUP_NAME] : { demandOption : false, describeFormatArgs : ['Builds'] },
-            [Options.SHA] : { demandOption : false, describe : 'List Builds with the specified Deployment SHA' },
-            [Options.TAG] : { demandOption : false, describe : 'List Builds with the specified Deployment tag' },
-            [Options.FLAGGED] : { demandOption : false, describe : 'List Builds with the specified flagged marker' }
+            [Options.BUILD_IDENTIFIER] : false
         }))
         .strict();
 };
@@ -56,5 +49,6 @@ exports.handler = function (argv) {
     if (!Options.checkCommandArgs(argv)) {
         return;
     }
-    new Build().list(new Options(argv));
+    const options = new Options(argv);
+    new Build(options).info(options);
 };
