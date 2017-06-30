@@ -30,23 +30,23 @@ const Options = require('../../../lib/util/Options');
 const COMMAND = 'link';
 const COMMAND_SECTION = 'project';
 const COMMAND_DESCRIPTION = 'Creates a new project in the current directory by linking it to the specified Product';
-const COMMAND_OPTIONS = '--product <PRODUCT_IDENTIFIER> [--device-file <device_file>] [--agent-file <agent_file>] ' +
-                        '[--create-files] [--force] [--help]';
 
 exports.command = COMMAND;
 
 exports.describe = COMMAND_DESCRIPTION;
 
 exports.builder = function (yargs) {
+    const options = Options.getOptions({
+        [Options.PRODUCT_IDENTIFIER] : true,
+        [Options.DEVICE_FILE] : false,
+        [Options.AGENT_FILE] : false,
+        [Options.CREATE_FILES] : false,
+        [Options.FORCE] : false,
+        [Options.DEBUG] : false
+    });
     return yargs
-        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, COMMAND_OPTIONS))
-        .options(Options.getOptions({
-            [Options.PRODUCT_IDENTIFIER] : true,
-            [Options.DEVICE_FILE] : false,
-            [Options.AGENT_FILE] : false,
-            [Options.CREATE_FILES] : false,
-            [Options.FORCE] : false
-        }))
+        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, Options.getCommandOptions(options)))
+        .options(options)
         .strict();
 };
 
@@ -54,5 +54,6 @@ exports.handler = function (argv) {
     if (!Options.checkCommandArgs(argv)) {
         return;
     }
-    new Project().link(new Options(argv));
+    const options = new Options(argv);
+    new Project(options).link(options);
 };

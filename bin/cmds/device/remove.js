@@ -30,19 +30,20 @@ const Options = require('../../../lib/util/Options');
 const COMMAND = 'remove';
 const COMMAND_SECTION = 'device';
 const COMMAND_DESCRIPTION = 'Removes the specified Device from the user’s account';
-const COMMAND_OPTIONS = '--device <DEVICE_IDENTIFIER> [--force] [--help]';
 
 exports.command = COMMAND;
 
 exports.describe = COMMAND_DESCRIPTION;
 
 exports.builder = function (yargs) {
+    const options = Options.getOptions({
+        [Options.DEVICE_IDENTIFIER] : true,
+        [Options.FORCE] : false,
+        [Options.DEBUG] : false
+    });
     return yargs
-        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, COMMAND_OPTIONS))
-        .options(Options.getOptions({
-            [Options.DEVICE_IDENTIFIER] : true,
-            [Options.FORCE] : false
-        }))
+        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, Options.getCommandOptions(options)))
+        .options(options)
         .strict();
 };
 

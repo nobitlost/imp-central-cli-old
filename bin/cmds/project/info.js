@@ -30,15 +30,18 @@ const Options = require('../../../lib/util/Options');
 const COMMAND = 'info';
 const COMMAND_SECTION = 'project';
 const COMMAND_DESCRIPTION = 'Displays info about the current project';
-const COMMAND_OPTIONS = '[--help]';
 
 exports.command = COMMAND;
 
 exports.describe = COMMAND_DESCRIPTION;
 
 exports.builder = function (yargs) {
+    const options = Options.getOptions({
+        [Options.DEBUG] : false
+    });
     return yargs
-        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, COMMAND_OPTIONS))
+        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, Options.getCommandOptions(options)))
+        .options(options)
         .strict();
 };
 
@@ -46,5 +49,6 @@ exports.handler = function (argv) {
     if (!Options.checkCommandArgs(argv)) {
         return;
     }
-    new Project().info();
+    const options = new Options(argv);
+    new Project(options).info();
 };

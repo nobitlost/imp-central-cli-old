@@ -30,24 +30,24 @@ const Options = require('../../../lib/util/Options');
 const COMMAND = 'get';
 const COMMAND_SECTION = 'build';
 const COMMAND_DESCRIPTION = 'Downloads the specified Build and displays information about it';
-const COMMAND_OPTIONS = '[--build <BUILD_IDENTIFIER>] [--device-file <device_file>] [--agent-file <agent_file>] ' +
-                        '[--device-only] [--agent-only] [--force] [--help]';
 
 exports.command = COMMAND;
 
 exports.describe = COMMAND_DESCRIPTION;
 
 exports.builder = function (yargs) {
+    const options = Options.getOptions({
+        [Options.BUILD_IDENTIFIER] : false,
+        [Options.DEVICE_FILE] : false,
+        [Options.AGENT_FILE] : false,
+        [Options.DEVICE_ONLY] : false,
+        [Options.AGENT_ONLY] : false,
+        [Options.FORCE] : false,
+        [Options.DEBUG] : false
+    });
     return yargs
-        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, COMMAND_OPTIONS))
-        .options(Options.getOptions({
-            [Options.BUILD_IDENTIFIER] : false,
-            [Options.DEVICE_FILE] : false,
-            [Options.AGENT_FILE] : false,
-            [Options.DEVICE_ONLY] : false,
-            [Options.AGENT_ONLY] : false,
-            [Options.FORCE] : false
-        }))
+        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, Options.getCommandOptions(options)))
+        .options(options)
         .strict();
 };
 

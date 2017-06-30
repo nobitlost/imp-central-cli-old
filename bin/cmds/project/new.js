@@ -30,25 +30,25 @@ const Options = require('../../../lib/util/Options');
 const COMMAND = 'new';
 const COMMAND_SECTION = 'project';
 const COMMAND_DESCRIPTION = 'Creates a new Project in the current directory';
-const COMMAND_OPTIONS = '--name <product_name> [--descr <product_description>] [--activate <device_group_name>] ' +
-                        '[--device-file <device_file>] [--agent-file <agent_file>] [--create-files] [--force] [--help]';
 
 exports.command = COMMAND;
 
 exports.describe = COMMAND_DESCRIPTION;
 
 exports.builder = function (yargs) {
+    const options = Options.getOptions({
+        [Options.NAME] : { demandOption : true, describe : 'Product name', _usage : '<product_name>' },
+        [Options.DESCRIPTION] : { demandOption : false, describe : 'Product description', _usage : '<product_description>' },
+        [Options.ACTIVATE] : { demandOption : false, isProjectOption : true },
+        [Options.DEVICE_FILE] : false,
+        [Options.AGENT_FILE] : false,
+        [Options.CREATE_FILES] : false,
+        [Options.FORCE] : false,
+        [Options.DEBUG] : false
+    });
     return yargs
-        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, COMMAND_OPTIONS))
-        .options(Options.getOptions({
-            [Options.NAME] : { demandOption : true, describe : 'Product name' },
-            [Options.DESCRIPTION] : { demandOption : false, describe : 'Product description' },
-            [Options.ACTIVATE] : { demandOption : false, isProjectOption : true },
-            [Options.DEVICE_FILE] : false,
-            [Options.AGENT_FILE] : false,
-            [Options.CREATE_FILES] : false,
-            [Options.FORCE] : false
-        }))
+        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, Options.getCommandOptions(options)))
+        .options(options)
         .strict();
 };
 
@@ -56,5 +56,6 @@ exports.handler = function (argv) {
     if (!Options.checkCommandArgs(argv)) {
         return;
     }
-    new Project().create(new Options(argv));
+    const options = new Options(argv);
+    new Project(options).create(options);
 };

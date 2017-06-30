@@ -30,19 +30,20 @@ const Options = require('../../../lib/util/Options');
 const COMMAND = 'assign';
 const COMMAND_SECTION = 'device';
 const COMMAND_DESCRIPTION = 'Assigns the specified Device to the specified Device Group';
-const COMMAND_OPTIONS = '--device <DEVICE_IDENTIFIER> [--dg <DEVICE_GROUP_IDENTIFIER>] [--help]';
 
 exports.command = COMMAND;
 
 exports.describe = COMMAND_DESCRIPTION;
 
 exports.builder = function (yargs) {
+    const options = Options.getOptions({
+        [Options.DEVICE_IDENTIFIER] : true,
+        [Options.DEVICE_GROUP_IDENTIFIER] : false,
+        [Options.DEBUG] : false
+    });
     return yargs
-        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, COMMAND_OPTIONS))
-        .options(Options.getOptions({
-            [Options.DEVICE_IDENTIFIER] : true,
-            [Options.DEVICE_GROUP_IDENTIFIER] : false
-        }))
+        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, Options.getCommandOptions(options)))
+        .options(options)
         .strict();
 };
 

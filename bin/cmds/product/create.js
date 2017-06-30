@@ -30,19 +30,20 @@ const Options = require('../../../lib/util/Options');
 const COMMAND = 'create';
 const COMMAND_SECTION = 'product';
 const COMMAND_DESCRIPTION = 'Creates a new Product with the specified Name and Description (if specified)';
-const COMMAND_OPTIONS = '--name <product_name> [--descr <product_description>] [--help]';
 
 exports.command = COMMAND;
 
 exports.describe = COMMAND_DESCRIPTION;
 
 exports.builder = function (yargs) {
+    const options = Options.getOptions({
+        [Options.NAME] : { demandOption : true, describe : 'Product name', _usage : '<product_name>' },
+        [Options.DESCRIPTION] : { demandOption : false, describe : 'Product description', _usage : '<product_description>' },
+        [Options.DEBUG] : false
+    });
     return yargs
-        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, COMMAND_OPTIONS))
-        .options(Options.getOptions({
-            [Options.NAME] : { demandOption : true, describe : 'Product name' },
-            [Options.DESCRIPTION] : { demandOption : false, describe : 'Product description' }
-        }))
+        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, Options.getCommandOptions(options)))
+        .options(options)
         .strict();
 };
 

@@ -30,7 +30,6 @@ const Options = require('../../../lib/util/Options');
 const COMMAND = 'stream';
 const COMMAND_SECTION = 'log';
 const COMMAND_DESCRIPTION = 'Displays logs from the specified Devices in real-time';
-const COMMAND_OPTIONS = '[--device <DEVICE_IDENTIFIER>] [--dg <DEVICE_GROUP_IDENTIFIER>] [--help]';
 
 exports.command = COMMAND;
 
@@ -39,13 +38,14 @@ exports.describe = COMMAND_DESCRIPTION;
 exports.builder = function (yargs) {
     const options = Options.getOptions({
         [Options.DEVICE_IDENTIFIER] : false,
-        [Options.DEVICE_GROUP_IDENTIFIER] : false
+        [Options.DEVICE_GROUP_IDENTIFIER] : false,
+        [Options.DEBUG] : false
     });
     options[Options.DEVICE_IDENTIFIER].type = 'array';
     options[Options.DEVICE_GROUP_IDENTIFIER].type = 'array';
 
     return yargs
-        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, COMMAND_OPTIONS))
+        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, Options.getCommandOptions(options)))
         .options(options)
         .strict();
 };
@@ -54,5 +54,6 @@ exports.handler = function (argv) {
     if (!Options.checkCommandArgs(argv)) {
         return;
     }
-    new Log().stream(new Options(argv));
+    const options = new Options(argv);
+    new Log(options).stream(options);
 };

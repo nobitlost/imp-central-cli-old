@@ -30,19 +30,20 @@ const Options = require('../../../lib/util/Options');
 const COMMAND = 'list';
 const COMMAND_SECTION = 'dg';
 const COMMAND_DESCRIPTION = 'Displays info about all or filtered Device Groups available for a user';
-const COMMAND_OPTIONS = '[--product-id <product_id>] [--product-name <product_name>]  [--help]';
 
 exports.command = COMMAND;
 
 exports.describe = COMMAND_DESCRIPTION;
 
 exports.builder = function (yargs) {
+    const options = Options.getOptions({
+        [Options.PRODUCT_ID] : { demandOption : false, describeFormatArgs : ['Device Groups'] },
+        [Options.PRODUCT_NAME] : { demandOption : false, describeFormatArgs : ['Device Groups'] },
+        [Options.DEBUG] : false
+    });
     return yargs
-        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, COMMAND_OPTIONS))
-        .options(Options.getOptions({
-            [Options.PRODUCT_ID] : { demandOption : false, describeFormatArgs : ['Device Groups'] },
-            [Options.PRODUCT_NAME] : { demandOption : false, describeFormatArgs : ['Device Groups'] }
-        }))
+        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, Options.getCommandOptions(options)))
+        .options(options)
         .strict();
 };
 
@@ -50,5 +51,6 @@ exports.handler = function (argv) {
     if (!Options.checkCommandArgs(argv)) {
         return;
     }
-    new DeviceGroup().list(new Options(argv));
+    const options = new Options(argv);
+    new DeviceGroup(options).list(options);
 };

@@ -30,21 +30,22 @@ const Options = require('../../../lib/util/Options');
 const COMMAND = 'update';
 const COMMAND_SECTION = 'dg';
 const COMMAND_DESCRIPTION = 'Updates the specified Device Group by a new Name and/or Description';
-const COMMAND_OPTIONS = '[--dg <DEVICE_GROUP_IDENTIFIER>] [--name <device_group_name>] [--descr <device_group_description>] [--activate] [--help]';
 
 exports.command = COMMAND;
 
 exports.describe = COMMAND_DESCRIPTION;
 
 exports.builder = function (yargs) {
+    const options = Options.getOptions({
+        [Options.DEVICE_GROUP_IDENTIFIER] : false,
+        [Options.NAME] : { demandOption : false, describe : 'New Device Group name', _usage : '<device_group_name>' },
+        [Options.DESCRIPTION] : { demandOption : false, describe : 'New Device Group description', _usage : '<device_group_description>' },
+        [Options.ACTIVATE] : false,
+        [Options.DEBUG] : false
+    });
     return yargs
-        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, COMMAND_OPTIONS))
-        .options(Options.getOptions({
-            [Options.DEVICE_GROUP_IDENTIFIER] : false,
-            [Options.NAME] : { demandOption : false, describe : 'New Device Group name' },
-            [Options.DESCRIPTION] : { demandOption : false, describe : 'New Device Group description' },
-            [Options.ACTIVATE] : false
-        }))
+        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, Options.getCommandOptions(options)))
+        .options(options)
         .strict();
 };
 

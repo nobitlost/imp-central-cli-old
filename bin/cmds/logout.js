@@ -29,15 +29,18 @@ const Options = require('../../lib/util/Options');
 
 const COMMAND = 'logout';
 const COMMAND_DESCRIPTION = 'Deletes global Auth File';
-const COMMAND_OPTIONS = '[--help]';
 
 exports.command = COMMAND;
 
 exports.describe = COMMAND_DESCRIPTION;
 
 exports.builder = function (yargs) {
+    const options = Options.getOptions({
+        [Options.DEBUG] : false
+    });
     return yargs
-        .usage(Options.getUsage(null, COMMAND, COMMAND_DESCRIPTION, COMMAND_OPTIONS))
+        .usage(Options.getUsage(null, COMMAND, COMMAND_DESCRIPTION, Options.getCommandOptions(options)))
+        .options(options)
         .strict();
 };
 
@@ -45,5 +48,6 @@ exports.handler = function (argv) {
     if (!Options.checkCommandArgs(argv, 1)) {
         return;
     }
-    new Auth(null, true).logout();
+    const options = new Options(argv);
+    new Auth(options, true).logout();
 };

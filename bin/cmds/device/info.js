@@ -30,18 +30,19 @@ const Options = require('../../../lib/util/Options');
 const COMMAND = 'info';
 const COMMAND_SECTION = 'device';
 const COMMAND_DESCRIPTION = 'Displays info about the specified Device';
-const COMMAND_OPTIONS = '--device <DEVICE_IDENTIFIER> [--help]';
 
 exports.command = COMMAND;
 
 exports.describe = COMMAND_DESCRIPTION;
 
 exports.builder = function (yargs) {
+    const options = Options.getOptions({
+        [Options.DEVICE_IDENTIFIER] : true,
+        [Options.DEBUG] : false
+    });
     return yargs
-        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, COMMAND_OPTIONS))
-        .options(Options.getOptions({
-            [Options.DEVICE_IDENTIFIER] : true
-        }))
+        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, Options.getCommandOptions(options)))
+        .options(options)
         .strict();
 };
 

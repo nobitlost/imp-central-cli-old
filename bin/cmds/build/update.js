@@ -31,23 +31,23 @@ const COMMAND = 'update';
 const COMMAND_SECTION = 'build';
  
 const COMMAND_DESCRIPTION = 'Updates description, tags and flagged attribute (whatever specified) of the specified Build';
-const COMMAND_OPTIONS = '[--build <BUILD_IDENTIFIER>] [--descr <build_description>] [--tag <tag>] [--remove-tag <tag>] ' +
-                        '[--flagged ([true]|false)] [--help]';
 
 exports.command = COMMAND;
 
 exports.describe = COMMAND_DESCRIPTION;
 
 exports.builder = function (yargs) {
+    const options = Options.getOptions({
+        [Options.BUILD_IDENTIFIER] : false,
+        [Options.DESCRIPTION] : { demandOption : false, describe : 'Description of the Deployment', _usage : '<build_description>' },
+        [Options.TAG] : { demandOption : false, describe : 'Deployment tag to be added' },
+        [Options.REMOVE_TAG] : false,
+        [Options.FLAGGED] : false,
+        [Options.DEBUG] : false
+    });
     return yargs
-        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, COMMAND_OPTIONS))
-        .options(Options.getOptions({
-            [Options.BUILD_IDENTIFIER] : false,
-            [Options.DESCRIPTION] : false,
-            [Options.TAG] : { demandOption : false, describe : 'Deployment tag to be added' },
-            [Options.REMOVE_TAG] : false,
-            [Options.FLAGGED] : false
-        }))
+        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, Options.getCommandOptions(options)))
+        .options(options)
         .strict();
 };
 

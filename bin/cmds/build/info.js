@@ -30,18 +30,19 @@ const Options = require('../../../lib/util/Options');
 const COMMAND = 'info';
 const COMMAND_SECTION = 'build';
 const COMMAND_DESCRIPTION = 'Displays information about the specified build';
-const COMMAND_OPTIONS = '[--build <BUILD_IDENTIFIER>] [--help]';
 
 exports.command = COMMAND;
 
 exports.describe = COMMAND_DESCRIPTION;
 
 exports.builder = function (yargs) {
+    const options = Options.getOptions({
+        [Options.BUILD_IDENTIFIER] : false,
+        [Options.DEBUG] : false
+    });
     return yargs
-        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, COMMAND_OPTIONS))
-        .options(Options.getOptions({
-            [Options.BUILD_IDENTIFIER] : false
-        }))
+        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, Options.getCommandOptions(options)))
+        .options(options)
         .strict();
 };
 

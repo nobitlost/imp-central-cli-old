@@ -30,18 +30,19 @@ const Options = require('../../../lib/util/Options');
 const COMMAND = 'get';
 const COMMAND_SECTION = 'log';
 const COMMAND_DESCRIPTION = 'Displays historical logs for the specified Device';
-const COMMAND_OPTIONS = '[--device <DEVICE_IDENTIFIER>] [--help]';
 
 exports.command = COMMAND;
 
 exports.describe = COMMAND_DESCRIPTION;
 
 exports.builder = function (yargs) {
+    const options = Options.getOptions({
+        [Options.DEVICE_IDENTIFIER] : false,
+        [Options.DEBUG] : false
+    });
     return yargs
-        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, COMMAND_OPTIONS))
-        .options(Options.getOptions({
-            [Options.DEVICE_IDENTIFIER] : false
-        }))
+        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, Options.getCommandOptions(options)))
+        .options(options)
         .strict();
 };
 
@@ -49,5 +50,6 @@ exports.handler = function (argv) {
     if (!Options.checkCommandArgs(argv)) {
         return;
     }
-    new Log().get(new Options(argv));
+    const options = new Options(argv);
+    new Log(options).get(options);
 };

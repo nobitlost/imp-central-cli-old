@@ -30,26 +30,26 @@ const Options = require('../../../lib/util/Options');
 const COMMAND = 'list';
 const COMMAND_SECTION = 'device';
 const COMMAND_DESCRIPTION = 'Displays info about all or filtered Devices available for a user';
-const COMMAND_OPTIONS = '[--unassigned] [--assigned] [--online] [--offline] [--product-id <product_id>] [--product-name <product_name>] ' +
-                        '[--dg-id <device_group_id>] [--dg-name <device_group_name>] [--help]';
 
 exports.command = COMMAND;
 
 exports.describe = COMMAND_DESCRIPTION;
 
 exports.builder = function (yargs) {
+    const options = Options.getOptions({
+        [Options.UNASSIGNED] : false,
+        [Options.ASSIGNED] : false,
+        [Options.ONLINE] : false,
+        [Options.OFFLINE] : false,
+        [Options.PRODUCT_ID] : { demandOption : false, describeFormatArgs : ['Devices'] },
+        [Options.PRODUCT_NAME] : { demandOption : false, describeFormatArgs : ['Devices'] },
+        [Options.DEVICE_GROUP_ID] : { demandOption : false, describeFormatArgs : ['Devices'] },
+        [Options.DEVICE_GROUP_NAME] : { demandOption : false, describeFormatArgs : ['Devices'] },
+        [Options.DEBUG] : false
+    });
     return yargs
-        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, COMMAND_OPTIONS))
-        .options(Options.getOptions({
-            [Options.UNASSIGNED] : false,
-            [Options.ASSIGNED] : false,
-            [Options.ONLINE] : false,
-            [Options.OFFLINE] : false,
-            [Options.PRODUCT_ID] : { demandOption : false, describeFormatArgs : ['Devices'] },
-            [Options.PRODUCT_NAME] : { demandOption : false, describeFormatArgs : ['Devices'] },
-            [Options.DEVICE_GROUP_ID] : { demandOption : false, describeFormatArgs : ['Devices'] },
-            [Options.DEVICE_GROUP_NAME] : { demandOption : false, describeFormatArgs : ['Devices'] }
-        }))
+        .usage(Options.getUsage(COMMAND_SECTION, COMMAND, COMMAND_DESCRIPTION, Options.getCommandOptions(options)))
+        .options(options)
         .strict();
 };
 
@@ -57,5 +57,6 @@ exports.handler = function (argv) {
     if (!Options.checkCommandArgs(argv)) {
         return;
     }
-    new Device().list(new Options(argv));
+    const options = new Options(argv);
+    new Device(options).list(options);
 };
